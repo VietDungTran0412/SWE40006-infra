@@ -1,0 +1,34 @@
+# Terraform files
+*.tfstate
+*.tfstate.*
+
+# Backup files
+*.tfplan
+
+# Crash logs
+crash.log
+
+# Ignore Terraform workspace files
+.terraform/
+
+# Ignore environment-specific files
+.terraformenv/
+
+# Ignore local environment files
+*.zip
+*.tgz
+
+# Ignore editor-specific files
+*.swp
+*~ 
+*.sublime-project
+*.sublime-workspace
+
+# Ignore Mac system files
+.DS_Store
+
+# Ignore VS Code files
+.vscode/
+
+# Ignore IDE files
+.idea/
