@@ -1,0 +1,55 @@
+---
+- name: Upgrade Yum Package Manager and Set Up MySQL Repository
+  hosts: all  # Replace with your target hosts or group
+  become: yes                # Use 'become' if you need sudo privileges
+  tasks:
+    - name: Ensure yum is updated
+      yum:
+        name: yum
+        state: latest
+
+    # - name: Download MySQL 8.0 Community Release RPM
+    #   get_url:
+    #     url: https://dev.mysql.com/get/mysql80-community-release-el9-1.noarch.rpm
+    #     dest: /temp/mysql80-community-release-el9-1.noarch.rpm
+    - name: Install Java 17 Amazon Corretto
+      ansible.builtin.yum:
+        name: java-17-amazon-corretto
+        state: present
+
+    - name: Ensure Docker is installed
+      package:
+        name: docker
+        state: present
+
+    - name: Start Docker service
+      service:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Pull MySQL Docker image
+      community.docker.docker_image:
+        name: mysql
+        tag: '8.2.0'  # Specify the desired version of MySQL
+        source: pull
+
+    - name: Create and start MySQL container
+      community.docker.docker_container:
+        name: mysql_container
+        image: mysql:8.0
+        state: started
+        restart_policy: always
+        env:
+          MYSQL_DATABASE: c6g1
+          MYSQL_ROOT_PASSWORD: root@password
+          MYSQL_USER: dev
+          MYSQL_PASSWORD: devpassword
+        published_ports:
+          - "3306:3306"  # Expose MySQL port
+
+    - name: Wait for MySQL to be available
+      wait_for:
+        port: 3306
+        delay: 10
+        timeout: 60
